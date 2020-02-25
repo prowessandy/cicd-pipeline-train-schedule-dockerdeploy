@@ -30,7 +30,10 @@ pipeline {
                     docker.withRegistry('https://registry.hub.docker.com', 'docker_hub_login') {
                         app.push("${env.BUILD_NUMBER}")
                         app.push("latest")
-                        
+                    }
+                }
+            }
+        }
         stage('DeployToProduction') {
             when {
                 branch 'master'
@@ -48,7 +51,6 @@ pipeline {
                             echo: 'caught error: $err'
                         }
                         sh "sshpass -p '$USERPASS' -v ssh -o StrictHostKeyChecking=no $USERNAME@$prod_ip \"docker run --restart always --name train-schedule -p 8080:8080 -d prowessandy/train-schedule:${env.BUILD_NUMBER}\""
-                    }
                     }
                 }
             }
